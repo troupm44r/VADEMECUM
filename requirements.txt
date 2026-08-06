@@ -1,3 +1,4 @@
 streamlit
-weasyprint
 pandas
+openpyxl
+weasyprint
