@@ -179,44 +179,70 @@ def build_fiche_data(row, columns_by_name):
 
 HTML_HEAD_CSS = """
 <style>
-    @page { size: A4 landscape; margin: 0; }
-    * { box-sizing: border-box; }
-    body { margin: 0; padding: 0; background-color: #fff; font-family: Arial, sans-serif; }
-    .fiche-layout { width: 1280px; height: 720px; padding: 15px 30px; background-color: #ffffff; position: relative; margin: 0 auto; }
-    .fiche-header-container { width: 100%; margin-bottom: 15px; }
-    .fiche-title-bar { background-color: #7b0d00; padding: 6px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #fff; }
-    .fiche-title-bar h1 { color: #ffffff; font-size: 16px; font-weight: bold; margin: 0; }
-    .fiche-title-bar .fiche-number { color: #e6a8d7; font-size: 20px; font-weight: bold; }
-    .fiche-subtitle-bar { background-color: #d26a00; padding: 4px 15px; width: 70%; border: 1px solid #000; margin-top: 2px; }
-    .fiche-subtitle-bar h2 { color: #ffffff; font-size: 13px; font-weight: bold; margin: 0; }
-    .fiche-top-grid { display: grid; grid-template-columns: 3.5fr 1.5fr 2fr 1.5fr; width: 100%; gap: 15px; margin-bottom: 15px; }
-    .fiche-meta-info { font-size: 12px; line-height: 1.4; color: #000; }
-    .fiche-meta-info div { display: flex; flex-wrap: wrap; column-gap: 15px; }
+    /* 1. Page Setup */
+    @page { 
+        size: A4 landscape; 
+        margin: 10mm; 
+        background-color: #ffffff;
+    }
+
+    * { 
+        box-sizing: border-box; 
+    }
+
+    body { 
+        margin: 0; 
+        padding: 0; 
+        font-family: Arial, sans-serif; 
+        color: #000;
+        line-height: 1.2;
+    }
+
+    /* 2. Main Layout */
+    .fiche-layout { 
+        width: 100%; 
+        position: relative; 
+    }
+
+    /* 3. Header Styling */
+    .fiche-header-container { width: 100%; margin-bottom: 10px; }
+    .fiche-title-bar { background-color: #7b0d00; padding: 5px 10px; display: table; width: 100%; border-bottom: 3px solid #fff; }
+    .fiche-title-bar h1 { color: #ffffff; font-size: 16px; font-weight: bold; margin: 0; display: table-cell; vertical-align: middle; }
+    .fiche-number { color: #e6a8d7; font-size: 16px; font-weight: bold; display: table-cell; text-align: right; vertical-align: middle; }
+    .fiche-subtitle-bar { background-color: #d26a00; padding: 4px 10px; width: 100%; border: 1px solid #000; margin-top: 2px; }
+    .fiche-subtitle-bar h2 { color: #ffffff; font-size: 12px; font-weight: bold; margin: 0; }
+
+    /* 4. Top Grid */
+    .fiche-top-grid { display: table; width: 100%; margin-bottom: 10px; table-layout: fixed; }
+    .fiche-meta-info { display: table-cell; width: 50%; font-size: 11px; vertical-align: top; }
     .fiche-meta-info span { font-weight: bold; }
-    .fiche-yellow-box { background-color: #fff8da; padding: 10px; font-size: 12px; font-weight: bold; height: max-content; color: #000; }
-    .fiche-yellow-box p { margin: 0 0 5px 0; }
-    .fiche-map { display: flex; flex-direction: column; align-items: flex-end; font-size: 10px; font-weight: bold; }
-    .fiche-map img { width: 120px; height: auto; max-height: 90px; object-fit: contain; }
-    .fiche-table-container { width: 100%; margin-bottom: 15px; }
-    .fiche-table { width: 100%; border-collapse: collapse; font-size: 12px; color: #000; }
-    .fiche-table th, .fiche-table td { border: 2px solid #000; padding: 6px; text-align: center; }
-    .fiche-table th { font-weight: bold; background-color: #fff; }
+    .fiche-yellow-box { display: table-cell; width: 20%; background-color: #fff8da; padding: 5px; font-size: 11px; font-weight: bold; border: 1px solid #000; vertical-align: top; }
+    .fiche-map { display: table-cell; width: 30%; text-align: right; font-size: 10px; font-weight: bold; vertical-align: top; }
+    .fiche-map img { width: 100px; height: auto; max-height: 70px; object-fit: contain; display: block; margin-left: auto; }
+
+    /* 5. Tables */
+    .fiche-table-container { width: 100%; margin-bottom: 10px; }
+    .fiche-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .fiche-table th, .fiche-table td { border: 1px solid #000; padding: 4px; text-align: center; }
+    .fiche-table th { font-weight: bold; background-color: #f2f2f2; }
     .fiche-table.grand-ensemble th, .fiche-table.grand-ensemble td { text-align: left; }
-    .fiche-middle-section { display: flex; width: 100%; gap: 15px; margin-bottom: 10px; align-items: flex-start; }
-    .fiche-profile { width: 200px; flex-shrink: 0; }
-    .fiche-profile img { width: 100%; height: 180px; object-fit: cover; border: 1px solid #000; }
-    .fiche-bottom-section { display: flex; width: 100%; justify-content: space-between; align-items: flex-start; border-top: 2px solid #8b5a2b; padding-top: 15px; margin-top: 5px; }
-    .fiche-legend { display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: #000; }
-    .fiche-legend p { margin: 0 0 5px 0; }
-    .fiche-legend-item { display: flex; align-items: center; gap: 10px; }
-    .fiche-legend-color { width: 40px; height: 15px; border: 1px solid #000; }
-    .fiche-wheels { display: flex; gap: 40px; justify-content: center; flex-grow: 1; align-items: flex-start; }
-    .fiche-wheel-box { display: flex; flex-direction: column; align-items: center; width: 220px; }
-    .fiche-wheel-title { font-size: 12px; font-weight: bold; text-align: center; margin-bottom: 10px; }
-    .fiche-wheel-box img { width: 160px; height: 160px; object-fit: contain; }
-    .fiche-logos { display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; font-size: 9px; height: 100%; }
-    .fiche-logos img { height: 30px; }
-    .fiche-missing-img { font-size: 10px; color: #999; border: 1px dashed #ccc; padding: 20px; text-align: center; }
+
+    /* 6. Middle Section */
+    .fiche-middle-section { display: table; width: 100%; margin-bottom: 10px; }
+    .fiche-profile { display: table-cell; width: 150px; vertical-align: top; }
+    .fiche-profile img { width: 100%; height: 140px; object-fit: cover; border: 1px solid #000; }
+
+    /* 7. Bottom Section */
+    .fiche-bottom-section { display: table; width: 100%; border-top: 2px solid #8b5a2b; padding-top: 10px; }
+    .fiche-legend { display: table-cell; width: 20%; font-size: 10px; vertical-align: top; }
+    .fiche-legend-item { display: table; width: 100%; margin-bottom: 3px; }
+    .fiche-legend-color { display: table-cell; width: 25px; height: 12px; border: 1px solid #000; vertical-align: middle; }
+    .fiche-wheels { display: table-cell; width: 40%; text-align: center; }
+    .fiche-wheel-box { display: inline-block; width: 48%; vertical-align: top; }
+    .fiche-wheel-box img { width: 120px; height: 120px; object-fit: contain; }
+    .fiche-wheel-title { font-size: 11px; font-weight: bold; margin-bottom: 5px; }
+    
+    .fiche-logos { display: table-cell; width: 20%; text-align: right; vertical-align: bottom; font-size: 9px; }
 </style>
 """
 
